@@ -159,21 +159,6 @@ async function handleCompletions (req, apiKey) {
   }
   let isV3 = model.startsWith("gemini-3");
   let body = await transformRequest(req, isV3);
-
-  // --- 新增：注入当前实时时间 ---
-  const currentDateTime = new Date().toLocaleString("zh-CN", { timeZone: "Asia/Shanghai" });
-  const timeInstruction = { 
-    parts: [{ text: `今天是 ${currentDateTime}。请以此时间为基准回答问题。` }] 
-  };
-
-  if (!body.systemInstruction) {
-    body.systemInstruction = timeInstruction;
-  } else {
-    // 如果原请求已有 systemInstruction，将时间追加到其 parts 中
-    body.systemInstruction.parts.push(...timeInstruction.parts);
-  }
-  // ------------------------------
-  
   const extra = req.extra_body?.google;
   if (extra) {
     if (extra.safety_settings) {
